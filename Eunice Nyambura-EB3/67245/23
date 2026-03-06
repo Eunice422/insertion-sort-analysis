@@ -1,0 +1,252 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Function to perform insertion sort
+void insertionSort(int arr[], int n) {
+    int i, j, key;
+    
+    // Traverse through 1 to n-1
+    for (i = 1; i < n; i++) {
+        key = arr[i];  // Current element to be inserted
+        j = i - 1;     // Index of the last element in sorted portion
+        
+        // Move elements greater than key one position ahead
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        
+        // Place key in its correct position
+        arr[j + 1] = key;
+    }
+}
+
+// Function to print the array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Function to create a copy of an array
+void copyArray(int source[], int dest[], int n) {
+    for (int i = 0; i < n; i++) {
+        dest[i] = source[i];
+    }
+}
+
+// Function to analyze best case (already sorted)
+void analyzeBestCase(int n) {
+    int *arr = (int*)malloc(n * sizeof(int));
+    
+    // Create already sorted array
+    for (int i = 0; i < n; i++) {
+        arr[i] = i + 1;
+    }
+    
+    printf("\nBest Case Analysis (Already Sorted):\n");
+    if (n <= 20) {
+        printf("Original array: ");
+        printArray(arr, n);
+    }
+    
+    clock_t start = clock();
+    insertionSort(arr, n);
+    clock_t end = clock();
+    
+    if (n <= 20) {
+        printf("Sorted array:   ");
+        printArray(arr, n);
+    }
+    
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+    printf("Time taken: %.3f ms\n", time_taken);
+    
+    free(arr);
+}
+
+// Function to analyze worst case (reverse sorted)
+void analyzeWorstCase(int n) {
+    int *arr = (int*)malloc(n * sizeof(int));
+    
+    // Create reverse sorted array
+    for (int i = 0; i < n; i++) {
+        arr[i] = n - i;
+    }
+    
+    printf("\nWorst Case Analysis (Reverse Sorted):\n");
+    if (n <= 20) {
+        printf("Original array: ");
+        printArray(arr, n);
+    }
+    
+    clock_t start = clock();
+    insertionSort(arr, n);
+    clock_t end = clock();
+    
+    if (n <= 20) {
+        printf("Sorted array:   ");
+        printArray(arr, n);
+    }
+    
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+    printf("Time taken: %.3f ms\n", time_taken);
+    
+    free(arr);
+}
+
+// Function to analyze average case (random order)
+void analyzeAverageCase(int n) {
+    int *arr = (int*)malloc(n * sizeof(int));
+    
+    // Create random array
+    srand(time(NULL));
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 100;  // Random numbers between 0 and 99
+    }
+    
+    printf("\nAverage Case Analysis (Random Order):\n");
+    if (n <= 20) {
+        printf("Original array: ");
+        printArray(arr, n);
+    }
+    
+    clock_t start = clock();
+    insertionSort(arr, n);
+    clock_t end = clock();
+    
+    if (n <= 20) {
+        printf("Sorted array:   ");
+        printArray(arr, n);
+    }
+    
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+    printf("Time taken: %.3f ms\n", time_taken);
+    
+    free(arr);
+}
+
+// Function to demonstrate the sorting process step by step
+void demonstrateSteps(int arr[], int n) {
+    printf("\nStep-by-step demonstration:\n");
+    printf("Initial array: ");
+    printArray(arr, n);
+    
+    int i, j, key;
+    int step = 1;
+    
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+        
+        printf("Step %d (inserting %d): ", step++, key);
+        
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+        
+        printArray(arr, n);
+    }
+}
+
+// Function to compare performance with different input sizes
+void performanceComparison() {
+    int sizes[] = {1000, 5000, 10000, 20000, 50000};
+    int num_sizes = sizeof(sizes) / sizeof(sizes[0]);
+    
+    printf("\n\n=== Performance Comparison ===\n");
+    printf("%-12s %-15s %-15s %-15s\n", "Input Size", "Best Case(ms)", "Worst Case(ms)", "Average Case(ms)");
+    printf("--------------------------------------------------------\n");
+    
+    for (int s = 0; s < num_sizes; s++) {
+        int n = sizes[s];
+        
+        // Best case
+        int *arr_best = (int*)malloc(n * sizeof(int));
+        for (int i = 0; i < n; i++) arr_best[i] = i + 1;
+        clock_t start = clock();
+        insertionSort(arr_best, n);
+        clock_t end = clock();
+        double best_time = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+        
+        // Worst case
+        int *arr_worst = (int*)malloc(n * sizeof(int));
+        for (int i = 0; i < n; i++) arr_worst[i] = n - i;
+        start = clock();
+        insertionSort(arr_worst, n);
+        end = clock();
+        double worst_time = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+        
+        // Average case
+        int *arr_avg = (int*)malloc(n * sizeof(int));
+        srand(time(NULL) + s);
+        for (int i = 0; i < n; i++) arr_avg[i] = rand() % 10000;
+        start = clock();
+        insertionSort(arr_avg, n);
+        end = clock();
+        double avg_time = ((double)(end - start)) / CLOCKS_PER_SEC * 1000;
+        
+        printf("%-12d %-15.3f %-15.3f %-15.3f\n", n, best_time, worst_time, avg_time);
+        
+        free(arr_best);
+        free(arr_worst);
+        free(arr_avg);
+    }
+}
+
+int main() {
+    printf("========================================\n");
+    printf("    INSERTION SORT ANALYSIS PROGRAM    \n");
+    printf("========================================\n");
+    
+    // Test with a small array to demonstrate the algorithm
+    printf("\n--- Basic Test with Small Array ---\n");
+    int test_arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(test_arr) / sizeof(test_arr[0]);
+    
+    printf("Original array: ");
+    printArray(test_arr, n);
+    
+    // Create a copy for step demonstration
+    int *demo_arr = (int*)malloc(n * sizeof(int));
+    copyArray(test_arr, demo_arr, n);
+    
+    insertionSort(test_arr, n);
+    printf("Sorted array:   ");
+    printArray(test_arr, n);
+    
+    // Demonstrate step-by-step process
+    demonstrateSteps(demo_arr, n);
+    free(demo_arr);
+    
+    // Analysis with different cases
+    printf("\n\n=== TIME COMPLEXITY ANALYSIS ===\n");
+    
+    // Analyze with different input cases
+    analyzeBestCase(10);
+    analyzeWorstCase(10);
+    analyzeAverageCase(10);
+    
+    // Performance comparison with larger inputs
+    performanceComparison();
+    
+    printf("\n\n=== COMPLEXITY SUMMARY ===\n");
+    printf("Best Case (Already Sorted):  O(n)  - Linear Time\n");
+    printf("Worst Case (Reverse Sorted): O(n²) - Quadratic Time\n");
+    printf("Average Case (Random):        O(n²) - Quadratic Time\n");
+    printf("Space Complexity:             O(1)  - Constant Space\n");
+    
+    printf("\n=== KEY OBSERVATIONS ===\n");
+    printf("1. Insertion sort is efficient for small datasets\n");
+    printf("2. It's adaptive - performs well on partially sorted data\n");
+    printf("3. It's stable - maintains relative order of equal elements\n");
+    printf("4. In-place algorithm - doesn't require extra memory\n");
+    printf("5. Best case occurs when array is already sorted\n");
+    printf("6. Worst case occurs when array is reverse sorted\n");
+    
+    return 0;
+}
